@@ -1,10 +1,10 @@
-package ru.practicum.shareit.item.dto;
+package ru.practicum.shareit.item.service;
 
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
 
-public interface ItemDto {
+public interface ItemService {
 
     Item add(long userId, Item item);
 
