@@ -27,10 +27,11 @@ public class ItemDtoImpl implements ItemDto {
         item.setUserId(userId);
         items.put(id, item);
         List<Long> list;
-        if(!itemsId.containsKey(userId))
+        if (!itemsId.containsKey(userId)) {
             list = new ArrayList<>();
-        else
+        } else {
             list = itemsId.get(userId);
+        }
         list.add(id);
         itemsId.put(userId, list);
         return item;
@@ -39,13 +40,16 @@ public class ItemDtoImpl implements ItemDto {
     @Override
     public Item edit(long userId, long itemId, Item item) {
         Item item1 = items.get(itemId);
-        if(item1.getUserId() == userId) {
-            if(item.getName() != null)
+        if (item1.getUserId() == userId) {
+            if (item.getName() != null) {
                 item1.setName(item.getName());
-            if(item.getDescription() != null)
+            }
+            if (item.getDescription() != null) {
                 item1.setDescription(item.getDescription());
-            if(item.getAvailable() != null)
+            }
+            if (item.getAvailable() != null) {
                 item1.setAvailable(item.getAvailable());
+            }
             return item1;
         } else {
             throw new NotOwnerException("Вы не явдяетесь владельцем записи");
@@ -59,17 +63,19 @@ public class ItemDtoImpl implements ItemDto {
 
     @Override
     public List<Item> findAll(long userId) {
-        if(itemsId.containsKey(userId)) {
+        if (itemsId.containsKey(userId)) {
             List<Long> list = itemsId.get(userId);
             return list.stream().map(items::get).collect(Collectors.toList());
-        }else
+        } else {
             return new ArrayList<>();
+        }
     }
 
     @Override
     public List<Item> search(String text) {
-        if(text.isBlank())
+        if (text.isBlank()) {
             return new ArrayList<>();
+        }
         return Stream.concat(items.values().stream()
                                 .filter(Item::getAvailable)
                                 .filter(x -> x.getName().toLowerCase().contains(text.toLowerCase())),
