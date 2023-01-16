@@ -7,8 +7,11 @@ import ru.practicum.shareit.item.model.Item;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import java.util.Map;
+
 import java.util.stream.Collectors;
+
 import java.util.stream.Stream;
 
 @Repository
@@ -24,7 +27,7 @@ public class ItemDtoImpl implements ItemDto {
         item.setUserId(userId);
         items.put(id, item);
         List<Long> list;
-        if (!itemsId.containsKey(userId))
+        if(!itemsId.containsKey(userId))
             list = new ArrayList<>();
         else
             list = itemsId.get(userId);
@@ -36,12 +39,12 @@ public class ItemDtoImpl implements ItemDto {
     @Override
     public Item edit(long userId, long itemId, Item item) {
         Item item1 = items.get(itemId);
-        if (item1.getUserId() == userId) {
-            if (item.getName() != null)
+        if(item1.getUserId() == userId) {
+            if(item.getName() != null)
                 item1.setName(item.getName());
-            if (item.getDescription() != null)
+            if(item.getDescription() != null)
                 item1.setDescription(item.getDescription());
-            if (item.getAvailable() != null)
+            if(item.getAvailable() != null)
                 item1.setAvailable(item.getAvailable());
             return item1;
         } else {
@@ -56,10 +59,10 @@ public class ItemDtoImpl implements ItemDto {
 
     @Override
     public List<Item> findAll(long userId) {
-        if (itemsId.containsKey(userId)) {
+        if(itemsId.containsKey(userId)) {
             List<Long> list = itemsId.get(userId);
             return list.stream().map(items::get).collect(Collectors.toList());
-        } else
+        }else
             return new ArrayList<>();
     }
 
