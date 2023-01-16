@@ -28,12 +28,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User edit(long userId, User user){
-      return repository.edit(userId, user);
+    public User edit(long userId, User user) {
+        return repository.edit(userId, user);
     }
 
     @Override
-    public void deleteUser(Long userId){
+    public void deleteUser(Long userId) {
         repository.deleteUser(userId);
     }
 }

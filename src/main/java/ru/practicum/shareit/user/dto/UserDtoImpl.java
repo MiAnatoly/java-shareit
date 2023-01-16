@@ -22,20 +22,21 @@ public class UserDtoImpl implements UserDto {
 
     @Override
     public User findById(long id) {
-        if(users.containsKey(id))
+        if (users.containsKey(id)) {
             return users.get(id);
-        else
+        } else {
             throw new NotObjectException("нет пользователя");
+        }
     }
 
     @Override
     public User save(User user) {
         List<User> userList = new ArrayList<>(users.values());
         if (userList.stream().noneMatch(x -> x.getEmail().equals(user.getEmail()))) {
-        ++id;
-        user.setId(id);
-        users.put(id, user);
-        return user;
+            ++id;
+            user.setId(id);
+            users.put(id, user);
+            return user;
         } else {
             throw new DuplicateException("позьзователь с данной почтой уже зарегистрирован");
         }
@@ -44,15 +45,17 @@ public class UserDtoImpl implements UserDto {
     @Override
     public User edit(long userId, User user) {
         User user1 = users.get(userId);
-            if(user.getName() != null)
-                user1.setName(user.getName());
-            if(user.getEmail() != null) {
-                if (users.values().stream().noneMatch(x -> x.getEmail().equals(user.getEmail())))
-                    user1.setEmail(user.getEmail());
-                else
-                    throw new DuplicateException("позьзователь с данной почтой уже зарегистрирован");
+        if (user.getName() != null) {
+            user1.setName(user.getName());
+        }
+        if (user.getEmail() != null) {
+            if (users.values().stream().noneMatch(x -> x.getEmail().equals(user.getEmail()))) {
+                user1.setEmail(user.getEmail());
+            } else {
+                throw new DuplicateException("позьзователь с данной почтой уже зарегистрирован");
             }
-            return user1;
+        }
+        return user1;
     }
 
     @Override
