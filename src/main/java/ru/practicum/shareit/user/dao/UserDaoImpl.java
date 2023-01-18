@@ -48,7 +48,7 @@ public class UserDaoImpl implements UserDao {
             userOld.setName(user.getName());
         }
         if (user.getEmail() != null && !user.getEmail().isBlank()) {
-            if(!user.getEmail().equals(userOld.getEmail())) {
+            if (!user.getEmail().equals(userOld.getEmail())) {
                 if (users.values().stream().noneMatch(x -> x.getEmail().equals(user.getEmail()))) {
                     userOld.setEmail(user.getEmail());
                 } else {
@@ -65,6 +65,6 @@ public class UserDaoImpl implements UserDao {
     }
 
     private boolean validate(List<User> users, User user) {
-       return users.stream().noneMatch(x -> x.getEmail().equals(user.getEmail()));
+        return users.stream().noneMatch(x -> x.getEmail().equals(user.getEmail()));
     }
 }
