@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user.dto;
+package ru.practicum.shareit.user.dao;
 
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.DuplicateException;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class UserDtoImpl implements UserDto {
+public class UserDaoImpl implements UserDao {
     private long id;
     private final Map<Long, User> users = new HashMap<>();
 
@@ -31,8 +31,7 @@ public class UserDtoImpl implements UserDto {
 
     @Override
     public User save(User user) {
-        List<User> userList = new ArrayList<>(users.values());
-        if (userList.stream().noneMatch(x -> x.getEmail().equals(user.getEmail()))) {
+        if (validate(new ArrayList<>(users.values()), user)) {
             ++id;
             user.setId(id);
             users.put(id, user);
@@ -44,22 +43,28 @@ public class UserDtoImpl implements UserDto {
 
     @Override
     public User edit(long userId, User user) {
-        User user1 = users.get(userId);
-        if (user.getName() != null) {
-            user1.setName(user.getName());
+        User userOld = users.get(userId);
+        if (user.getName() != null && !user.getName().isBlank()) {
+            userOld.setName(user.getName());
         }
-        if (user.getEmail() != null) {
-            if (users.values().stream().noneMatch(x -> x.getEmail().equals(user.getEmail()))) {
-                user1.setEmail(user.getEmail());
-            } else {
-                throw new DuplicateException("позьзователь с данной почтой уже зарегистрирован");
+        if (user.getEmail() != null && !user.getEmail().isBlank()) {
+            if(!user.getEmail().equals(userOld.getEmail())) {
+                if (users.values().stream().noneMatch(x -> x.getEmail().equals(user.getEmail()))) {
+                    userOld.setEmail(user.getEmail());
+                } else {
+                    throw new DuplicateException("позьзователь с данной почтой уже зарегистрирован");
+                }
             }
         }
-        return user1;
+        return userOld;
     }
 
     @Override
     public void deleteUser(Long id) {
         users.remove(id);
+    }
+
+    private boolean validate(List<User> users, User user) {
+       return users.stream().noneMatch(x -> x.getEmail().equals(user.getEmail()));
     }
 }

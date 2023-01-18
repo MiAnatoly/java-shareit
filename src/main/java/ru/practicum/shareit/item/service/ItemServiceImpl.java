@@ -2,42 +2,50 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.NotOwnerException;
+import ru.practicum.shareit.item.ItemMapper;
+import ru.practicum.shareit.item.dao.ItemDao;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.UserMapper;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.servece.UserService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
-    private final ItemDto itemDto;
+    private final ItemDao itemDao;
     private final UserService userService;
 
     @Override
-    public Item add(long userId, Item item) {
-        userService.findById(userId);
-        return itemDto.add(userId, item);
+    public ItemDto add(long userId, ItemDto itemDto) {
+        User owner = UserMapper.toUser(userService.findById(userId));
+        return ItemMapper.toItemDto(itemDao.add(userId, ItemMapper.toItem(itemDto, owner)));
     }
 
     @Override
-    public Item edit(long userId, long itemId, Item item) {
-        userService.findById(userId);
-        return itemDto.edit(userId, itemId, item);
+    public ItemDto edit(long userId, long itemId, ItemDto itemDto) {
+        if (itemDao.findById(itemId).getOwner().getId() != userId) {
+            throw new NotOwnerException("Вы не явдяетесь владельцем записи");
+        }
+        User owner = UserMapper.toUser(userService.findById(userId));
+        return ItemMapper.toItemDto(itemDao.edit(userId, itemId, ItemMapper.toItem(itemDto, owner)));
     }
 
     @Override
-    public Item findById(long itemId) {
-        return itemDto.findById(itemId);
+    public ItemDto findById(long itemId) {
+        return ItemMapper.toItemDto(itemDao.findById(itemId));
     }
 
     @Override
-    public List<Item> findAll(long userId) {
-        return itemDto.findAll(userId);
+    public List<ItemDto> findAll(long userId) {
+        return itemDao.findAll(userId).stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
     }
 
     @Override
-    public List<Item> search(String text) {
-        return itemDto.search(text);
+    public List<ItemDto> search(String text) {
+        return itemDao.search(text).stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
     }
 }

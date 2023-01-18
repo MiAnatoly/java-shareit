@@ -1,17 +1,22 @@
 package ru.practicum.shareit.user.dto;
 
-import ru.practicum.shareit.user.model.User;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import ru.practicum.shareit.Create;
+import ru.practicum.shareit.Update;
 
-import java.util.List;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 
-public interface UserDto {
-    List<User> findAll();
-
-    User findById(long id);
-
-    User save(User user);
-
-    User edit(long userId, User user);
-
-    void deleteUser(Long id);
+@Setter
+@Getter
+@AllArgsConstructor
+public class UserDto {
+    private long id;
+    @Email(groups = {Create.class, Update.class})
+    @NotBlank(groups = {Create.class})
+    private String email;
+    @NotBlank(groups = {Create.class})
+    private String name;
 }
