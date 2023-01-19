@@ -11,7 +11,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.servece.UserService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -41,11 +40,11 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> findAll(long userId) {
-        return itemDao.findAll(userId).stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
+        return ItemMapper.toItemsDto(itemDao.findAll(userId));
     }
 
     @Override
     public List<ItemDto> search(String text) {
-        return itemDao.search(text).stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
+        return ItemMapper.toItemsDto(itemDao.search(text));
     }
 }

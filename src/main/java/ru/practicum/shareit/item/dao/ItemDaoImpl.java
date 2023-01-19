@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Repository
 public class ItemDaoImpl implements ItemDao {
@@ -60,12 +59,9 @@ public class ItemDaoImpl implements ItemDao {
 
     @Override
     public List<Item> search(String text) {
-        return Stream.concat(items.values().stream()
-                                .filter(Item::getIsAvailable)
-                                .filter(x -> x.getName().toLowerCase().contains(text.toLowerCase())),
-                        items.values().stream()
-                                .filter(Item::getIsAvailable)
-                                .filter(x -> x.getDescription().toLowerCase().contains(text.toLowerCase())))
+        return items.values().stream()
+                .filter(Item::getIsAvailable)
+                .filter(x -> x.getName().toLowerCase().contains(text.toLowerCase()) || x.getDescription().toLowerCase().contains(text.toLowerCase()))
                 .distinct()
                 .collect(Collectors.toList());
     }

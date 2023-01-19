@@ -31,14 +31,11 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User save(User user) {
-        if (validate(new ArrayList<>(users.values()), user)) {
-            ++id;
-            user.setId(id);
-            users.put(id, user);
-            return user;
-        } else {
-            throw new DuplicateException("позьзователь с данной почтой уже зарегистрирован");
-        }
+        validate(user);
+        ++id;
+        user.setId(id);
+        users.put(id, user);
+        return user;
     }
 
     @Override
@@ -49,11 +46,8 @@ public class UserDaoImpl implements UserDao {
         }
         if (user.getEmail() != null && !user.getEmail().isBlank()) {
             if (!user.getEmail().equals(userOld.getEmail())) {
-                if (users.values().stream().noneMatch(x -> x.getEmail().equals(user.getEmail()))) {
-                    userOld.setEmail(user.getEmail());
-                } else {
-                    throw new DuplicateException("позьзователь с данной почтой уже зарегистрирован");
-                }
+                validate(user);
+                userOld.setEmail(user.getEmail());
             }
         }
         return userOld;
@@ -64,7 +58,9 @@ public class UserDaoImpl implements UserDao {
         users.remove(id);
     }
 
-    private boolean validate(List<User> users, User user) {
-        return users.stream().noneMatch(x -> x.getEmail().equals(user.getEmail()));
+    private void validate(User user) {
+        if (users.values().stream().anyMatch(x -> x.getEmail().equals(user.getEmail()))) {
+            throw new DuplicateException("позьзователь с данной почтой уже зарегистрирован");
+        }
     }
 }

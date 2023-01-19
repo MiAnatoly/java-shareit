@@ -7,7 +7,6 @@ import ru.practicum.shareit.user.dao.UserDao;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -16,7 +15,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAllUsers() {
-        return repository.findAll().stream().map(UserMapper::toUserDto).collect(Collectors.toList());
+        return UserMapper.toUsersDto(repository.findAll());
     }
 
     @Override
