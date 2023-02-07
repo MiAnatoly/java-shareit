@@ -10,9 +10,9 @@ import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserMapper {
-    public static User toUser(UserDto userDto) {
+    public static User toUser(Long userId, UserDto userDto) {
         return new User(
-                userDto.getId(),
+                userId,
                 userDto.getEmail(),
                 userDto.getName()
         );

@@ -14,35 +14,35 @@ import java.util.List;
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
 public class UserController {
-    private final UserService userService;
+    private final UserService service;
 
     @GetMapping
     public List<UserDto> findAll() {
-        return userService.getAllUsers();
+        return service.findAll();
     }
     //показать всех пользователей
 
     @GetMapping("/{userId}")
     public UserDto findById(@PathVariable long userId) {
-        return userService.findById(userId);
+        return service.findById(userId);
     }
     // показать пользователя по id
 
     @PatchMapping("/{userId}")
     public UserDto edit(@PathVariable long userId, @Validated({Update.class}) @RequestBody UserDto userDto) {
-        return userService.edit(userId, userDto);
+        return service.edit(userId, userDto);
     }
-
     // внести изменению в данных пользователя
+
     @PostMapping
     public UserDto add(@Validated({Create.class}) @RequestBody UserDto userDto) {
-        return userService.saveUser(userDto);
+        return service.save(userDto);
     }
-
     // добавить пользователя
+
     @DeleteMapping("/{userId}")
     public void delete(@PathVariable long userId) {
-        userService.deleteUser(userId);
+        service.delete(userId);
     }
     // удалить пользователя
 }
