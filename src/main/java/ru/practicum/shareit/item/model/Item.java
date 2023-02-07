@@ -29,6 +29,7 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "REQUEST_ID")
     private ItemRequest request;
+
     @Override
     public int hashCode() {
         return getClass().hashCode();
