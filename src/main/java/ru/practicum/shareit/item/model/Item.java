@@ -19,7 +19,7 @@ public class Item {
     private Long id;
     @ManyToOne
     @JoinColumn(name = "OWNER_ID")
-    private User Owner;
+    private User owner;
     @Column(name = "NAME")
     private String name;
     @Column(name = "DESCRIPTION")
@@ -29,7 +29,6 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "REQUEST_ID")
     private ItemRequest request;
-
     @Override
     public int hashCode() {
         return getClass().hashCode();

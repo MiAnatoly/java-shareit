@@ -9,8 +9,8 @@ import java.util.List;
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
     @Query("select i from Item i " +
-            "where i.Owner.id = ?1 " +
-            "order by i.Owner.id desc")
+            "where i.owner.id = ?1 " +
+            "order by i.owner.id desc")
     List<Item> findAllForUser(long userId);
 
     @Query("select i from Item i " +

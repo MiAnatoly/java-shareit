@@ -21,19 +21,19 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findByBooker_IdAndEndBeforeOrderByStartDesc(Long bookerId, LocalDateTime end);
 
-    @Query("select b from Booking b where b.item.Owner.id = ?1 order by b.start desc")
+    @Query("select b from Booking b where b.item.owner.id = ?1 order by b.start desc")
     List<Booking> findAllOwner(Long userId);
 
-    @Query("select b from Booking b where b.item.Owner.id = ?1 and b.start < ?2 and b.end > ?2 order by b.start desc")
+    @Query("select b from Booking b where b.item.owner.id = ?1 and b.start < ?2 and b.end > ?2 order by b.start desc")
     List<Booking> findCurrentOwner(Long itemId, LocalDateTime dateTime);
 
-    @Query("select b from Booking b where b.item.Owner.id = ?1 and b.end < ?2 order by b.start desc")
+    @Query("select b from Booking b where b.item.owner.id = ?1 and b.end < ?2 order by b.start desc")
     List<Booking> findPastOwner(Long itemId, LocalDateTime dateTime);
 
-    @Query("select b from Booking b where b.item.Owner.id = ?1 and b.start > ?2 order by b.start desc")
+    @Query("select b from Booking b where b.item.owner.id = ?1 and b.start > ?2 order by b.start desc")
     List<Booking> findFutureOwner(Long itemId, LocalDateTime dateTime);
 
-    @Query("select b from Booking b where b.item.Owner.id = ?1 and b.status = ?2 order by b.start desc")
+    @Query("select b from Booking b where b.item.owner.id = ?1 and b.status = ?2 order by b.start desc")
     List<Booking> findStatusOwner(Long itemId, Status status);
 
     @Query(nativeQuery = true, value = "select b.* from BOOKINGS as b" +
