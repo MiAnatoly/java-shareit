@@ -56,7 +56,7 @@ public class ItemMapper {
     }
 
     private static ItemBookingDto.Booking findByBooking(Booking booking) {
-        if(booking != null) {
+        if (booking != null) {
             return new ItemBookingDto.Booking(booking.getId(), booking.getBooker().getId());
         } else {
             return null;

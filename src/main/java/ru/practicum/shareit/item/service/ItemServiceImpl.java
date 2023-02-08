@@ -91,7 +91,7 @@ public class ItemServiceImpl implements ItemService {
             Booking nextBooking = null;
             Booking lastBooking = null;
             List<Comment> commentsByItem = new ArrayList<>();
-            if(comments.containsKey(item)) {
+            if (comments.containsKey(item)) {
                 commentsByItem = comments.get(item);
             }
             if (bookings.containsKey(item)) {
@@ -127,14 +127,14 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private Booking findByNextBooking(List<Booking> bookings) {
-        return  (bookings
+        return (bookings
                 .stream()
                 .filter(x -> x.getStart().isAfter(LocalDateTime.now()))
                 .min(Comparator.comparing(Booking::getStart))).orElse(null);
     }
 
     private Booking findByLastBooking(List<Booking> bookings) {
-        return  (bookings
+        return (bookings
                 .stream()
                 .filter(x -> x.getStart().isBefore(LocalDateTime.now()))
                 .min((x1, x2) -> x2.getStart().compareTo(x1.getStart()))).orElse(null);

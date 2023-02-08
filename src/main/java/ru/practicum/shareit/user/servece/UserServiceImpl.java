@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserRefundDto edit(long userId, UserDto userDto) {
         User userNew = UserMapper.toUser(userId, userDto);
-        User userOld = repository.findById(userId).orElseThrow(()-> new NotObjectException("нет пользователя"));
+        User userOld = repository.findById(userId).orElseThrow(() -> new NotObjectException("нет пользователя"));
         if (userNew.getName() != null && !userNew.getName().isBlank()) {
             userOld.setName(userNew.getName());
         }

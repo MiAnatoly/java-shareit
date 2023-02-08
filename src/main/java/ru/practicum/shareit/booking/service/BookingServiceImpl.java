@@ -50,7 +50,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     @Override
     public BookingItemDto approved(Long userId, Long bookingId, Boolean approved) {
-        Booking booking = bookingDao.findById(bookingId).orElseThrow(()-> new NotBookingException("нет запроса"));
+        Booking booking = bookingDao.findById(bookingId).orElseThrow(() -> new NotBookingException("нет запроса"));
         if (booking.getStatus() != Status.WAITING) {
             throw new StatusConfirmedException("ответ по бранированию зафиксирован ранее");
         }
