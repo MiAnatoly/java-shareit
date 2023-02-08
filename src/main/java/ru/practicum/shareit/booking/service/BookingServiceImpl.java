@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingMapper;
-import ru.practicum.shareit.booking.dao.BookingRepository;
+import ru.practicum.shareit.booking.dto.dao.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingItemDto;
 import ru.practicum.shareit.booking.model.Booking;
@@ -50,7 +50,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     @Override
     public BookingItemDto approved(Long userId, Long bookingId, Boolean approved) {
-        Booking booking = bookingDao.getOne(bookingId);
+        Booking booking = bookingDao.findById(bookingId).orElseThrow(()-> new NotBookingException("нет запроса"));
         if (booking.getStatus() != Status.WAITING) {
             throw new StatusConfirmedException("ответ по бранированию зафиксирован ранее");
         }
@@ -62,7 +62,7 @@ public class BookingServiceImpl implements BookingService {
                 status = Status.REJECTED;
             }
             booking.setStatus(status);
-            return BookingMapper.toBookingItemDto(bookingDao.save(booking));
+            return BookingMapper.toBookingItemDto(booking);
         } else {
             throw new NotOwnerException("не являетесь владельцем вещи");
         }
@@ -115,13 +115,13 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingDao.findAllOwner(userId);
                 break;
             case CURRENT:
-                bookings = bookingDao.findCurrentOwner(userId, LocalDateTime.now());
+                bookings = bookingDao.findCurrentOwner(userId);
                 break;
             case PAST:
-                bookings = bookingDao.findPastOwner(userId, LocalDateTime.now());
+                bookings = bookingDao.findPastOwner(userId);
                 break;
             case FUTURE:
-                bookings = bookingDao.findFutureOwner(userId, LocalDateTime.now());
+                bookings = bookingDao.findFutureOwner(userId);
                 break;
             case WAITING:
                 bookings = bookingDao.findStatusOwner(userId, Status.WAITING);

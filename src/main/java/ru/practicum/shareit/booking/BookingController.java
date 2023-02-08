@@ -8,9 +8,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingItemDto;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.exception.DateException;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -22,12 +20,7 @@ public class BookingController {
     @PostMapping
     public BookingItemDto add(@RequestHeader("X-Sharer-User-Id") long userId,
                               @Validated({Create.class}) @RequestBody BookingDto bookingDto) {
-        if (bookingDto.getStart().isBefore(bookingDto.getEnd()) &&
-                bookingDto.getStart().isAfter(LocalDateTime.now())) {
             return service.add(userId, bookingDto);
-        } else {
-            throw new DateException("не верные даты");
-        }
     }
 
     // добавить запрос
@@ -48,9 +41,6 @@ public class BookingController {
     public List<BookingItemDto> findAllForUser(@RequestHeader("X-Sharer-User-Id") long userId,
                                                @RequestParam(name = "state", defaultValue = "ALL") String state) {
         State bookingState = validate(state);
-        if (bookingState == null) {
-            throw new IllegalArgumentException("Unknown state: UNSUPPORTED_STATUS");
-        }
         return service.findAllForUser(userId, bookingState);
     }
 
@@ -59,19 +49,20 @@ public class BookingController {
     public List<BookingItemDto> findAllForOwner(@RequestHeader("X-Sharer-User-Id") long userId,
                                                 @RequestParam(name = "state", defaultValue = "ALL") String state) {
         State bookingState = validate(state);
-        if (bookingState == null) {
-            throw new IllegalArgumentException("Unknown state: UNSUPPORTED_STATUS");
-        }
         return service.findAllForOwner(userId, bookingState);
     }
 
     // показать все запросы владельцу вещей (разбивка по статусам)
     private State validate(String state) {
+        State bookingState = null;
         for (State value : State.values()) {
             if (value.name().equals(state)) {
-                return value;
+                bookingState = value;
             }
         }
-        return null;
+        if (bookingState == null) {
+            throw new IllegalArgumentException("Unknown state: UNSUPPORTED_STATUS");
+        }
+        return bookingState;
     }
 }

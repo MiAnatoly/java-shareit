@@ -8,6 +8,7 @@ import ru.practicum.shareit.exception.NotObjectException;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.dao.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserRefundDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
@@ -19,35 +20,34 @@ public class UserServiceImpl implements UserService {
     private final UserRepository repository;
 
     @Override
-    public List<UserDto> findAll() {
+    public List<UserRefundDto> findAll() {
         return UserMapper.toUsersDto(repository.findAll(Pageable.ofSize(3)).toList());
     }
 
     @Override
-    public UserDto findById(long id) {
+    public UserRefundDto findById(long id) {
         return UserMapper.toUserDto(repository.findById(id)
                 .orElseThrow(() -> new NotObjectException("нет пользователя")));
     }
 
     @Transactional
     @Override
-    public UserDto save(UserDto userDto) {
+    public UserRefundDto save(UserDto userDto) {
         return UserMapper.toUserDto(repository.save(UserMapper.toUser(null, userDto)));
     }
 
     @Transactional
     @Override
-    public UserDto edit(long userId, UserDto userDto) {
+    public UserRefundDto edit(long userId, UserDto userDto) {
         User userNew = UserMapper.toUser(userId, userDto);
-        User userOld = repository.getOne(userId);
-        if (userNew.getName() == null || userNew.getName().isBlank()) {
-            userNew.setName(userOld.getName());
+        User userOld = repository.findById(userId).orElseThrow(()-> new NotObjectException("нет пользователя"));
+        if (userNew.getName() != null && !userNew.getName().isBlank()) {
+            userOld.setName(userNew.getName());
         }
-        if (userNew.getEmail() == null || userNew.getEmail().isBlank()) {
-            userNew.setEmail(userOld.getEmail());
+        if (userNew.getEmail() != null && !userNew.getEmail().isBlank()) {
+            userOld.setEmail(userNew.getEmail());
         }
-        userNew.setId(userId);
-        return UserMapper.toUserDto(repository.save(userNew));
+        return UserMapper.toUserDto(userOld);
     }
 
     @Transactional

@@ -3,6 +3,7 @@ package ru.practicum.shareit.user;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserRefundDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
@@ -18,15 +19,15 @@ public class UserMapper {
         );
     }
 
-    public static UserDto toUserDto(User user) {
-        return new UserDto(
+    public static UserRefundDto toUserDto(User user) {
+        return new UserRefundDto(
                 user.getId(),
                 user.getEmail(),
                 user.getName()
         );
     }
 
-    public static List<UserDto> toUsersDto(List<User> users) {
+    public static List<UserRefundDto> toUsersDto(List<User> users) {
         return users.stream().map(UserMapper::toUserDto).collect(Collectors.toList());
     }
 }

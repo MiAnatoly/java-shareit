@@ -6,7 +6,6 @@ import javax.persistence.*;
 
 @Getter
 @Setter
-@ToString
 @Entity
 @Table(name = "USERS", schema = "public")
 @NoArgsConstructor
@@ -21,15 +20,4 @@ public class User {
     @Column(name = "NAME")
     private String name;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User)) return false;
-        return id != null && id.equals(((User) o).getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }

@@ -25,24 +25,13 @@ public class Booking {
     private LocalDateTime start;
     @Column(name = "END_DATE")
     private LocalDateTime end;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "ITEM_ID")
     private Item item;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "BOOKER_ID")
     private User booker;
     @Column(name = "STATUS")
     private Status status;
 
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Booking)) return false;
-        return id != null && id.equals(((Booking) o).getId());
-    }
 }
