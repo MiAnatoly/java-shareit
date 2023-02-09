@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingMapper;
-import ru.practicum.shareit.booking.dto.dao.BookingRepository;
+import ru.practicum.shareit.booking.dao.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingItemDto;
 import ru.practicum.shareit.booking.model.Booking;
@@ -42,8 +42,8 @@ public class BookingServiceImpl implements BookingService {
         }
         User user = userDao.findById(userId)
                 .orElseThrow(() -> new NotObjectException("отсутствует пользователь"));
-        bookingDto.setStatus(Status.WAITING);
         Booking booking = BookingMapper.toBooking(user, item, bookingDto);
+        booking.setStatus(Status.WAITING);
         return BookingMapper.toBookingItemDto(bookingDao.save(booking));
     }
 

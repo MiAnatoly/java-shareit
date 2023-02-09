@@ -8,7 +8,6 @@ import ru.practicum.shareit.Update;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.time.LocalDateTime;
 
 @Setter
 @Getter
@@ -18,6 +17,4 @@ public class CommentDto {
     @NotBlank(groups = {Create.class})
     @Size(max = 200, groups = {Update.class, Create.class})
     private String text;
-    private String authorName;
-    private LocalDateTime created;
 }

@@ -1,4 +1,4 @@
-package ru.practicum.shareit.booking.dto.dao;
+package ru.practicum.shareit.booking.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -37,11 +37,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("select b from Booking b where b.item.owner.id = ?1 and b.status = ?2 order by b.start desc")
     List<Booking> findStatusOwner(Long itemId, Status status);
 
-    @Query("select b from Booking b where b.item.owner.id = ?1 and b.item.id = ?2")
-    List<Booking> findItemByOwner(Long userId, Long itemId);
+    @Query("select b from Booking b where b.item.owner.id = ?1 and b.item.id = ?2" +
+            " and b.status = ?3")
+    List<Booking> findItemByOwner(Long userId, Long itemId, Status status);
 
-    @Query("select b from Booking b where b.item.owner.id = ?1")
-    List<Booking> findAllItemsByOwner(Long userId);
+    @Query("select b from Booking b where b.item.owner.id = ?1 and b.status = ?2 " +
+            "order by b.start desc")
+    List<Booking> findAllItemsByOwner(Long userId, Status status);
 
     @Query("select b from Booking b where b.booker.id = ?1 and b.item.id = ?2" +
             " and b.status = ?3 and b.start < current_timestamp ")

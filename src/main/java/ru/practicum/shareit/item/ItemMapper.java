@@ -20,7 +20,7 @@ public class ItemMapper {
 
     public static Item toItem(ItemDto itemDto, User owner) {
         return new Item(
-                itemDto.getId(),
+                null,
                 owner,
                 itemDto.getName(),
                 itemDto.getDescription(),
