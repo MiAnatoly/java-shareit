@@ -90,10 +90,10 @@ public class ItemServiceImpl implements ItemService {
             Booking lastBooking = null;
             List<Comment> commentsByItem = comments.getOrDefault(item, List.of());
             List<Booking> bookingsByItem = bookings.getOrDefault(item, List.of());
-                if (!bookingsByItem.isEmpty()) {
-                    nextBooking = findByNextBooking(bookingsByItem);
-                    lastBooking = findByLastBooking(bookingsByItem);
-                }
+            if (!bookingsByItem.isEmpty()) {
+                nextBooking = findByNextBooking(bookingsByItem);
+                lastBooking = findByLastBooking(bookingsByItem);
+            }
             itemsBooking.add(ItemMapper.toItemBookingDto(lastBooking, nextBooking, commentsByItem, item));
         }
         return itemsBooking;
