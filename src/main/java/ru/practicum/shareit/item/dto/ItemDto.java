@@ -14,8 +14,6 @@ import javax.validation.constraints.Size;
 @Getter
 @AllArgsConstructor
 public class ItemDto {
-    private Long id;
-    private Long userId;
     @NotBlank(groups = {Create.class})
     private String name;
     @NotNull(groups = {Create.class})
