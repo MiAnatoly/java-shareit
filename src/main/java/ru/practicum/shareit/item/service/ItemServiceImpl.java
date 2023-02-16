@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dao.BookingRepository;
@@ -20,6 +21,8 @@ import ru.practicum.shareit.item.dto.ItemBookingDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemRefundDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.dao.RequestRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.dao.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
@@ -35,12 +38,18 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userDao;
     private final CommentRepository commentDao;
     private final BookingRepository bookingDao;
+    private final RequestRepository requestDao;
 
     @Transactional
     @Override
     public ItemRefundDto add(long userId, ItemDto itemDto) {
         User user = userDao.findById(userId).orElseThrow(() -> new NotObjectException("нет пользователя"));
-        Item item = ItemMapper.toItem(itemDto, user);
+        ItemRequest request = null;
+        if (itemDto.getRequestId() != null) {
+            request = requestDao.findById(itemDto.getRequestId())
+                    .orElseThrow(() -> new NotObjectException("нет данного запроса"));
+        }
+        Item item = ItemMapper.toItem(itemDto, request, user);
         return ItemMapper.toItemRefundDto(itemDao.save(item));
     }
 
@@ -52,7 +61,7 @@ public class ItemServiceImpl implements ItemService {
             throw new NotOwnerException("Вы не явдяетесь владельцем записи");
         }
         User user = userDao.findById(userId).orElseThrow(() -> new NotObjectException("нет пользователя"));
-        Item itemNew = ItemMapper.toItem(itemDto, user);
+        Item itemNew = ItemMapper.toItem(itemDto, null, user);
         if (itemNew.getName() != null && !itemNew.getName().isBlank()) {
             item.setName(itemNew.getName());
         }
@@ -67,7 +76,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemBookingDto findById(long userId, long itemId) {
-        List<Booking> bookings = bookingDao.findItemByOwner(userId, itemId, Status.APPROVED);
+        User user = userDao.findById(userId).orElseThrow(() -> new NotObjectException("пользователь не найден"));
+        List<Booking> bookings = bookingDao.findItemByOwner(user, itemId, Status.APPROVED);
         Booking nextBooking = findByNextBooking(bookings);
         Booking lastBooking = findByLastBooking(bookings);
         List<Comment> comments = commentDao.findByItem_Id(itemId);
@@ -76,13 +86,14 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemBookingDto> findAllForUser(long userId) {
-        List<Item> items = itemDao.findAllForUser(userId);
+    public List<ItemBookingDto> findAllForUser(Integer page, Integer size, long userId) {
+        User user = userDao.findById(userId).orElseThrow(() -> new NotObjectException("пользователь не найден"));
+        List<Item> items = itemDao.findAllForUser(user, PageRequest.of(page, size)).getContent();
         List<ItemBookingDto> itemsBooking = new ArrayList<>();
         Map<Item, List<Comment>> comments = commentDao.findByItemInOrderByCreatedDesc(items)
                 .stream()
                 .collect(Collectors.groupingBy(Comment::getItem));
-        Map<Item, List<Booking>> bookings = bookingDao.findAllItemsByOwner(userId, Status.APPROVED)
+        Map<Item, List<Booking>> bookings = bookingDao.findAllItemsByOwner(user, Status.APPROVED)
                 .stream()
                 .collect(Collectors.groupingBy(Booking::getItem));
         for (Item item : items) {
@@ -100,8 +111,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemRefundDto> search(String text) {
-        return ItemMapper.toItemsRefundDto(itemDao.search(text));
+    public List<ItemRefundDto> search(String text, Integer page, Integer size) {
+        return ItemMapper.toItemsRefundDto(itemDao.search(text, PageRequest.of(page, size)).getContent());
     }
 
     @Transactional
@@ -109,7 +120,7 @@ public class ItemServiceImpl implements ItemService {
     public CommentRefundDto addComment(Long userId, Long itemId, CommentDto commentDto) {
         User user = userDao.findById(userId).orElseThrow(() -> new NotObjectException("пользователь не найден"));
         Item item = itemDao.findById(itemId).orElseThrow(() -> new NotObjectException("вещь не найдена"));
-        List<Booking> bookings = bookingDao.findByBooker_IdAndItem_Id(userId, itemId,
+        List<Booking> bookings = bookingDao.findByBooker_IdAndItem_Id(user, itemId,
                 Status.APPROVED);
         if (!bookings.isEmpty()) {
             Comment comment = CommentMapper.toComment(user, item, commentDto);

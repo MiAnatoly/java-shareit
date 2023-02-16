@@ -10,6 +10,7 @@ import ru.practicum.shareit.item.dto.ItemBookingDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemRefundDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
@@ -18,23 +19,28 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ItemMapper {
 
-    public static Item toItem(ItemDto itemDto, User owner) {
+    public static Item toItem(ItemDto itemDto, ItemRequest request, User owner) {
         return new Item(
                 null,
                 owner,
                 itemDto.getName(),
                 itemDto.getDescription(),
                 itemDto.getAvailable(),
-                null
+                request
         );
     }
 
     public static ItemRefundDto toItemRefundDto(Item item) {
+        Long requestId = null;
+        if (item.getRequest() != null) {
+            requestId = item.getRequest().getId();
+        }
         return new ItemRefundDto(
                 item.getId(),
                 item.getName(),
                 item.getDescription(),
-                item.getIsAvailable()
+                item.getIsAvailable(),
+                requestId
         );
     }
 

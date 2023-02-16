@@ -16,9 +16,9 @@ public interface ItemService {
 
     ItemBookingDto findById(long userId, long itemId);
 
-    List<ItemBookingDto> findAllForUser(long userId);
+    List<ItemBookingDto> findAllForUser(Integer page, Integer size, long userId);
 
-    List<ItemRefundDto> search(String text);
+    List<ItemRefundDto> search(String text, Integer page, Integer size);
 
     CommentRefundDto addComment(Long userId, Long itemId, CommentDto commentDto);
 }

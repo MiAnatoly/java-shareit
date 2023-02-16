@@ -24,25 +24,34 @@ public class UserController {
     //показать всех пользователей
 
     @GetMapping("/{userId}")
-    public UserRefundDto findById(@PathVariable long userId) {
+    public UserRefundDto findById(
+            @PathVariable long userId
+    ) {
         return service.findById(userId);
     }
     // показать пользователя по id
 
     @PatchMapping("/{userId}")
-    public UserRefundDto edit(@PathVariable long userId, @Validated({Update.class}) @RequestBody UserDto userDto) {
+    public UserRefundDto edit(
+            @PathVariable long userId,
+            @Validated({Update.class}) @RequestBody UserDto userDto
+    ) {
         return service.edit(userId, userDto);
     }
     // внести изменению в данных пользователя
 
     @PostMapping
-    public UserRefundDto add(@Validated({Create.class}) @RequestBody UserDto userDto) {
+    public UserRefundDto add(
+            @Validated({Create.class}) @RequestBody UserDto userDto
+    ) {
         return service.save(userDto);
     }
     // добавить пользователя
 
     @DeleteMapping("/{userId}")
-    public void delete(@PathVariable long userId) {
+    public void delete(
+            @PathVariable long userId
+    ) {
         service.delete(userId);
     }
     // удалить пользователя
