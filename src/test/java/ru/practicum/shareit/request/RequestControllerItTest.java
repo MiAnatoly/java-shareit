@@ -162,7 +162,7 @@ class RequestControllerItTest {
     }
 
     @Test
-    void findAllNotOwner_whenParamFromNotValid_Min_thanReturnInternalServerError() throws Exception {
+    void findAllNotOwner_whenParamFromNotValid_Min_thanReturnBadRequest() throws Exception {
         Long userId = 1L;
         int from = -1;
         int size = 2;
@@ -173,13 +173,13 @@ class RequestControllerItTest {
                         .header("X-Sharer-User-Id", userId)
                         .param("from", String.valueOf(from))
                         .param("size", String.valueOf(size)))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isBadRequest());
 
         verify(service, never()).findAllNotOwner(anyLong(), any(), anyInt());
     }
 
     @Test
-    void findAllNotOwner_whenParamSizeNotValid_Min_thanReturnInternalServerError() throws Exception {
+    void findAllNotOwner_whenParamSizeNotValid_Min_thanReturnBadRequest() throws Exception {
         Long userId = 1L;
         int from = 0;
         int size = 0;
@@ -190,13 +190,13 @@ class RequestControllerItTest {
                         .header("X-Sharer-User-Id", userId)
                         .param("from", String.valueOf(from))
                         .param("size", String.valueOf(size)))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isBadRequest());
 
         verify(service, never()).findAllNotOwner(anyLong(), any(), anyInt());
     }
 
     @Test
-    void findAllNotOwner_whenParamSizeNotValid_Max_thanReturnInternalServerError() throws Exception {
+    void findAllNotOwner_whenParamSizeNotValid_Max_thanReturnBadRequest() throws Exception {
         Long userId = 1L;
         int from = -1;
         int size = 60;
@@ -207,7 +207,7 @@ class RequestControllerItTest {
                         .header("X-Sharer-User-Id", userId)
                         .param("from", String.valueOf(from))
                         .param("size", String.valueOf(size)))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isBadRequest());
 
         verify(service, never()).findAllNotOwner(anyLong(), any(), anyInt());
     }

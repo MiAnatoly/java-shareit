@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.exception.*;
 
+import javax.validation.ConstraintViolationException;
+
+
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
@@ -71,6 +74,13 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse value(final InvalidValueException e) {
+        log.warn(e.getMessage(), e);
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse validated(final ConstraintViolationException e) {
         log.warn(e.getMessage(), e);
         return new ErrorResponse(e.getMessage());
     }
