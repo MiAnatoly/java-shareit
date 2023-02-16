@@ -11,6 +11,7 @@ import ru.practicum.shareit.user.servece.UserService;
 
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor

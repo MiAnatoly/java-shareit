@@ -130,7 +130,7 @@ class RequestControllerItTest {
     }
 
     @Test
-    void findAllNotOwner_whenWithParamNotValidPage_thanReturnInternalServerError() throws Exception {
+    void findAllNotOwner_whenWithParamNotValidPage_thanReturnBadRequest() throws Exception {
         Long userId = 1L;
         int from = 3;
         int size = 5;
@@ -141,7 +141,7 @@ class RequestControllerItTest {
                         .header("X-Sharer-User-Id", userId)
                         .param("from", String.valueOf(from))
                         .param("size", String.valueOf(size)))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isBadRequest());
 
         verify(service, never()).findAllNotOwner(anyLong(), any(), anyInt());
     }

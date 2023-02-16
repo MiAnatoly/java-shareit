@@ -18,6 +18,7 @@ import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,16 +64,14 @@ public class RequestServiceImpl implements RequestService {
     }
 
     private List<ItemRequestRefundDto> itemsForAllRequests(List<ItemRequest> requests) {
-        List<Item> items = itemDao.findByRequesters(requests);
+        Map<ItemRequest, List<Item>> itemsRequest = itemDao.findByRequesters(requests)
+                .stream()
+                .collect(Collectors.groupingBy(Item::getRequest));
         List<ItemRequestRefundDto> requestsDto = new ArrayList<>();
         for (ItemRequest request : requests) {
-            List<Item> itemsRequest = itemsForRequest(request.getId(), items);
-            requestsDto.add(RequestMapper.toRequestRefundDto(request, itemsRequest));
+            List<Item> items = itemsRequest.getOrDefault(request, List.of());
+            requestsDto.add(RequestMapper.toRequestRefundDto(request, items));
         }
         return requestsDto;
-    }
-
-    private List<Item> itemsForRequest(Long requestId, List<Item> items) {
-        return items.stream().filter(x -> x.getRequest().getId().equals(requestId)).collect(Collectors.toList());
     }
 }

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ru.practicum.shareit.exception.InvalidValueException;
 import ru.practicum.shareit.request.dto.ItemRequestRefundDto;
 import ru.practicum.shareit.request.service.RequestService;
 
@@ -36,8 +37,8 @@ class RequestControllerTest {
     }
 
     @Test
-    void findAllNotOwner_whenWithParamNotValidPage_thanReturnArithmeticException() {
-        assertThrows(ArithmeticException.class, () -> controller.findAllNotOwner(1L, 3, 5));
+    void findAllNotOwner_whenWithParamNotValidPage_thanReturnInvalidValueException() {
+        assertThrows(InvalidValueException.class, () -> controller.findAllNotOwner(1L, 3, 5));
 
         verify(service, never()).findAllNotOwner(anyLong(), anyInt(), anyInt());
     }
