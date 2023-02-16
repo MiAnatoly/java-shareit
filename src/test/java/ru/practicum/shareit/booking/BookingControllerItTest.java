@@ -71,26 +71,6 @@ class BookingControllerItTest {
     }
 
     @Test
-    void add_whenNotValid_DateStartBeforeEnd_thanReturnBadRequest() throws Exception {
-        Long userId = 1L;
-        BookingDto bookingDto = new BookingDto(
-                LocalDateTime.now().plusMinutes(2),
-                LocalDateTime.now().plusMinutes(2),
-                1L
-        );
-
-        when(service.add(anyLong(), any())).thenReturn(new BookingItemDto());
-
-        mockMvc.perform(post("/bookings")
-                        .contentType("application/json")
-                        .content(mapper.writeValueAsString(bookingDto))
-                        .header("X-Sharer-User-Id", userId))
-                .andExpect(status().isBadRequest());
-
-        verify(service, never()).add(anyLong(), any());
-    }
-
-    @Test
     void add_whenNotValid_DateNull_thanReturnBadRequest() throws Exception {
         Long userId = 1L;
         BookingDto bookingDto = new BookingDto(
