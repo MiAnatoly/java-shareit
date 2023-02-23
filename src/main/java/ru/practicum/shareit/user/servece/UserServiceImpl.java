@@ -1,7 +1,7 @@
 package ru.practicum.shareit.user.servece;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotObjectException;
@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserRefundDto> findAll() {
-        return UserMapper.toUsersDto(repository.findAll(Pageable.ofSize(3)).toList());
+        return UserMapper.toUsersDto(repository.findAll(PageRequest.ofSize(10)).getContent());
     }
 
     @Override
@@ -33,7 +33,9 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserRefundDto save(UserDto userDto) {
-        return UserMapper.toUserDto(repository.save(UserMapper.toUser(null, userDto)));
+        User user  = UserMapper.toUser(null, userDto);
+        User userRefund = repository.save(user);
+        return UserMapper.toUserDto(userRefund);
     }
 
     @Transactional

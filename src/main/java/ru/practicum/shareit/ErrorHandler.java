@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.exception.*;
 
+import javax.validation.ConstraintViolationException;
+
+
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
@@ -15,13 +18,6 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse notOwner(final NotOwnerException e) {
-        log.warn(e.getMessage());
-        return new ErrorResponse(e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse duplicate(final DuplicateException e) {
         log.warn(e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
@@ -56,13 +52,6 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse date(final DateException e) {
-        log.warn(e.getMessage(), e);
-        return new ErrorResponse(e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse confirmed(final StatusConfirmedException e) {
         log.warn(e.getMessage(), e);
         return new ErrorResponse(e.getMessage());
@@ -78,6 +67,20 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse comment(final CommentException e) {
+        log.warn(e.getMessage(), e);
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse value(final InvalidValueException e) {
+        log.warn(e.getMessage(), e);
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse validated(final ConstraintViolationException e) {
         log.warn(e.getMessage(), e);
         return new ErrorResponse(e.getMessage());
     }

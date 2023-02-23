@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.practicum.shareit.Create;
 import ru.practicum.shareit.booking.valide.DateStartBeforeEnd;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 @DateStartBeforeEnd(groups = {Create.class})
 public class BookingDto {
     @FutureOrPresent(groups = {Create.class})
