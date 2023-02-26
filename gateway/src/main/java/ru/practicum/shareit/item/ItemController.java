@@ -2,7 +2,6 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -75,7 +74,7 @@ public class ItemController {
             @RequestParam(value = "size", defaultValue = "10") @Min(1) @Max(50) int size
     ) {
         if (text.isBlank()) {
-            return new ResponseEntity<>(List.of(), HttpStatus.OK);
+            return ResponseEntity.ok(List.of());
         }
         int page = ValidPage.page(from, size);
         log.info("Get item search={}", text);
