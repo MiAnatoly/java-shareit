@@ -11,14 +11,15 @@ import ru.practicum.shareit.booking.dto.BookingItemDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.model.Status;
+import ru.practicum.shareit.booking.strategy.BookingParam;
+import ru.practicum.shareit.booking.strategy.BookingSearch;
+import ru.practicum.shareit.booking.strategy.StrategyFactory;
 import ru.practicum.shareit.exception.*;
 import ru.practicum.shareit.item.dao.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dao.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Transactional(readOnly = true)
@@ -29,6 +30,7 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingDao;
     private final UserRepository userDao;
     private final ItemRepository itemDao;
+    private final StrategyFactory bookingSearch;
 
     @Transactional
     @Override
@@ -82,59 +84,24 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingItemDto> findAllForUser(Long userId, State state, Integer page, Integer size) {
         userDao.findById(userId).orElseThrow(() -> new NotObjectException("нет пользователя"));
-        List<Booking> bookings = new ArrayList<>();
-        switch (state) {
-            case ALL:
-                bookings = bookingDao.findByBooker_IdOrderByStartDesc(userId, PageRequest.of(page, size)).getContent();
-                break;
-            case CURRENT:
-                bookings = bookingDao.findByBooker_IdAndStartBeforeAndEndAfterOrderByStartDesc(
-                        userId, LocalDateTime.now(), LocalDateTime.now(), PageRequest.of(page, size)).getContent();
-                break;
-            case PAST:
-                bookings = bookingDao.findByBooker_IdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now(),
-                        PageRequest.of(page, size)).getContent();
-                break;
-            case FUTURE:
-                bookings = bookingDao.findByBooker_IdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now(),
-                        PageRequest.of(page, size)).getContent();
-                break;
-            case WAITING:
-                bookings = bookingDao.findByBooker_IdAndStatus(userId, Status.WAITING,
-                        PageRequest.of(page, size)).getContent();
-                break;
-            case REJECTED:
-                bookings = bookingDao.findByBooker_IdAndStatus(userId, Status.REJECTED,
-                        PageRequest.of(page, size)).getContent();
-                break;
-        }
+        BookingSearch bookingSearch = bookingSearch(state);
+        List<Booking> bookings = bookingSearch.findAllForUser(new BookingParam(userId, PageRequest.of(page, size)));
         return BookingMapper.toBookingsItemDto(bookings);
     }
 
     @Override
     public List<BookingItemDto> findAllForOwner(Long userId, State state, Integer page, Integer size) {
-        User user = userDao.findById(userId).orElseThrow(() -> new NotObjectException("нет пользователя"));
-        List<Booking> bookings = new ArrayList<>();
-        switch (state) {
-            case ALL:
-                bookings = bookingDao.findAllOwner(user, PageRequest.of(page, size)).getContent();
-                break;
-            case CURRENT:
-                bookings = bookingDao.findCurrentOwner(user, PageRequest.of(page, size)).getContent();
-                break;
-            case PAST:
-                bookings = bookingDao.findPastOwner(user, PageRequest.of(page, size)).getContent();
-                break;
-            case FUTURE:
-                bookings = bookingDao.findFutureOwner(user, PageRequest.of(page, size)).getContent();
-                break;
-            case WAITING:
-                bookings = bookingDao.findStatusOwner(user, Status.WAITING, PageRequest.of(page, size)).getContent();
-                break;
-            case REJECTED:
-                bookings = bookingDao.findStatusOwner(user, Status.REJECTED, PageRequest.of(page, size)).getContent();
-                break;
-        }
+        userDao.findById(userId).orElseThrow(() -> new NotObjectException("нет пользователя"));
+        BookingSearch bookingSearch = bookingSearch(state);
+        List<Booking> bookings = bookingSearch.findAllForOwner(new BookingParam(userId, PageRequest.of(page, size)));
         return BookingMapper.toBookingsItemDto(bookings);
+    }
+
+    private BookingSearch bookingSearch(State state) {
+        BookingSearch search = bookingSearch.findBookingSearch(state);
+        if(search == null) {
+            throw new RuntimeException("Добавь пожалуйста реализацию для поиска" + state);
+        }
+        return search;
     }
 }

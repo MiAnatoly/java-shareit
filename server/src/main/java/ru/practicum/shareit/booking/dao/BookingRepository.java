@@ -24,21 +24,21 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     Page<Booking> findByBooker_IdAndEndBeforeOrderByStartDesc(Long bookerId, LocalDateTime end, Pageable pageable);
 
-    @Query("select b from Booking b where b.item.owner = ?1 order by b.start desc")
-    Page<Booking> findAllOwner(User user, Pageable pageable);
+    @Query("select b from Booking b where b.item.owner.id = ?1 order by b.start desc")
+    Page<Booking> findAllOwner(Long userId, Pageable pageable);
 
-    @Query("select b from Booking b where b.item.owner = ?1 " +
+    @Query("select b from Booking b where b.item.owner.id = ?1 " +
             "and current_timestamp between b.start and b.end order by b.start desc")
-    Page<Booking> findCurrentOwner(User user, Pageable pageable);
+    Page<Booking> findCurrentOwner(Long userId, Pageable pageable);
 
-    @Query("select b from Booking b where b.item.owner = ?1 and b.end < current_timestamp order by b.start desc")
-    Page<Booking> findPastOwner(User user, Pageable pageable);
+    @Query("select b from Booking b where b.item.owner.id = ?1 and b.end < current_timestamp order by b.start desc")
+    Page<Booking> findPastOwner(Long userId, Pageable pageable);
 
-    @Query("select b from Booking b where b.item.owner = ?1 and b.start > current_timestamp order by b.start desc")
-    Page<Booking> findFutureOwner(User user, Pageable pageable);
+    @Query("select b from Booking b where b.item.owner.id = ?1 and b.start > current_timestamp order by b.start desc")
+    Page<Booking> findFutureOwner(Long userId, Pageable pageable);
 
-    @Query("select b from Booking b where b.item.owner = ?1 and b.status = ?2 order by b.start desc")
-    Page<Booking> findStatusOwner(User user, Status status, Pageable pageable);
+    @Query("select b from Booking b where b.item.owner.id = ?1 and b.status = ?2 order by b.start desc")
+    Page<Booking> findStatusOwner(Long userId, Status status, Pageable pageable);
 
     @Query("select b from Booking b where b.item.owner = ?1 and b.item.id = ?2" +
             " and b.status = ?3")
